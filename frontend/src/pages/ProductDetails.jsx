@@ -57,7 +57,6 @@ function ProductDetails() {
         setAdding(false);
     };
 
-    // --- LÓGICA CORRIGIDA DO COMPRAR AGORA ---
     const handleBuyNow = async () => {
         if (!user) {
             navigate('/login');
@@ -67,12 +66,8 @@ function ProductDetails() {
         setBuying(true);
         try {
             const pId = product.productId || product.product_ID;
-
-            // 1. Adiciona ao carrinho primeiro
             await addToCart(pId, 1);
 
-            // 2. Cria o pedido passando o ID do usuário (CORREÇÃO AQUI)
-            // O ID pode variar de nome dependendo do seu backend (userId, user_ID ou id)
             const userId = user.userId || user.user_ID || user.id;
 
             if (!userId) {
@@ -81,7 +76,6 @@ function ProductDetails() {
 
             const createdOrder = await orderService.createOrder(userId);
 
-            // 3. Redireciona para o Checkout
             if (createdOrder && createdOrder.orderId) {
                 navigate(`/checkout/${createdOrder.orderId}`);
             } else {

@@ -66,7 +66,6 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    // --- CORREÇÃO AQUI ---
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar usuário", description = "Atualiza os dados de um usuário existente")
     @ApiResponses(value = {
@@ -81,7 +80,6 @@ public class UserController {
         UserResponseDTO user = userService.updateUser(id, dto);
         return ResponseEntity.ok(user);
     }
-    // ---------------------
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar usuário", description = "Remove um usuário do sistema")

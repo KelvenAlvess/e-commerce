@@ -11,9 +11,9 @@ import java.math.BigDecimal;
 public record ProductCreateDTO(
         @NotBlank String productName,
         @NotBlank String description,
-        @NotNull Long categoryId,        // ← apenas ID
+        @NotNull Long categoryId,
         @NotNull BigDecimal price,
-        @NotNull Long sellerId,          // ← apenas ID
+        @NotNull Long sellerId,
         @NotNull Integer stockQuantity,
         String imageUrl
 ) {

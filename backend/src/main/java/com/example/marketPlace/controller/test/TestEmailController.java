@@ -19,11 +19,10 @@ public class TestEmailController {
 
     @GetMapping
     public ResponseEntity<String> sendTestEmail(@RequestParam String email) {
-        // Simula um envio de e-mail para o endereço que você passar na URL
         emailService.sendPaymentConfirmation(
                 email,
-                9999L, // ID do Pedido Falso
-                new BigDecimal("150.00") // Valor Falso
+                9999L,
+                new BigDecimal("150.00")
         );
 
         return ResponseEntity.ok("E-mail de teste enviado para: " + email);

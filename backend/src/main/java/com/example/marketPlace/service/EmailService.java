@@ -32,7 +32,6 @@ public class EmailService {
             helper.setTo(recipientEmail);
             helper.setSubject("Pagamento Aprovado - Pedido #" + orderId);
 
-            // Corpo do E-mail em HTML
             String htmlContent = String.format("""
                 <html>
                     <body>
@@ -53,7 +52,6 @@ public class EmailService {
 
         } catch (MessagingException e) {
             log.error("Falha ao enviar e-mail: ", e);
-            // Nota: Em produção, eu poderia jogar isso numa fila de "retry" (DLQ)
         }
     }
 }

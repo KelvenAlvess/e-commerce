@@ -37,18 +37,16 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus status;
 
-    @Column(unique = true) // Garante unicidade no nível do banco
+    @Column(unique = true)
     private String transactionId;
 
-    @Column(unique = true, updatable = false) // Segurança contra dupla cobrança
+    @Column(unique = true, updatable = false)
     private String idempotencyKey;
 
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    // Removido Invoice para simplificar este exemplo,
-    // ou mantenha se sua lógica de negócio exigir
     @OneToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;

@@ -1,6 +1,5 @@
 import Checkout from './Checkout';
 
-// Agora recebe orderData (o pedido criado)
 function CartCheckoutModal({ open, onClose, orderData }) {
     if (!open) return null;
 

@@ -97,7 +97,6 @@ public class UserService {
             user.setRoles(dto.roles());
         }
 
-        // Lógica de senha: Só atualiza se vier preenchida
         if (dto.password() != null && !dto.password().isEmpty()) {
             user.setPassword(bCryptPasswordEncoder.encode(dto.password()));
         }

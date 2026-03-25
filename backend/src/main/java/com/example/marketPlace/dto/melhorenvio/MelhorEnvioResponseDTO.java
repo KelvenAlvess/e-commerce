@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record MelhorEnvioResponseDTO(
         int id,
         String name,
-        double price, // Pode vir string ou number, o Jackson tenta converter
+        double price,
         @JsonProperty("custom_price") double customPrice,
         @JsonProperty("delivery_time") int deliveryTime,
         Company company,

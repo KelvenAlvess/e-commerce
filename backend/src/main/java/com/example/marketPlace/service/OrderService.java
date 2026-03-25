@@ -31,37 +31,31 @@ public class OrderService {
     public OrderResponseDTO createOrderFromCart(OrderCreateDTO dto) {
         log.info("Criando pedido para o usuário ID: {}", dto.userId());
 
-        // 1. Buscar Usuário
         User buyer = userRepository.findById(dto.userId())
                 .orElseThrow(() -> new UserNotFoundException(dto.userId()));
 
-        // 2. Buscar Itens do Carrinho
         List<CartItem> cartItems = cartItemRepository.findByUser(buyer);
 
         if (cartItems.isEmpty()) {
             throw new EmptyCartException(dto.userId());
         }
 
-        // 3. Validar Estoque (Lança exceção se falhar)
         validateStock(cartItems);
 
-        // 4. Criar o Pedido (Cabeçalho)
         Order order = new Order();
         order.setBuyer(buyer);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
 
-        // 5. Converter CartItems em OrderItems e Calcular Totais
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         for (CartItem cartItem : cartItems) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order); // Vínculo Bidirecional Importante
+            orderItem.setOrder(order);
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
 
-            // Conversão segura de Double (Cart) para BigDecimal (Order)
             BigDecimal unitPrice = BigDecimal.valueOf(cartItem.getPrice());
             orderItem.setUnitPrice(unitPrice);
 
@@ -71,7 +65,6 @@ public class OrderService {
             orderItems.add(orderItem);
             totalAmount = totalAmount.add(subtotal);
 
-            // Baixa no Estoque
             Product product = cartItem.getProduct();
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
             productRepository.save(product);
@@ -80,15 +73,11 @@ public class OrderService {
         order.setItems(orderItems);
         order.setTotal(totalAmount);
 
-        // 6. Salvar Pedido (Cascade salvará os itens)
         Order savedOrder = orderRepository.save(order);
         log.info("Pedido criado com sucesso: ID {}", savedOrder.getOrderId());
 
-        // 7. Limpar Carrinho
         cartItemRepository.deleteAll(cartItems);
 
-        // 8. Retornar DTO
-        // Precisamos converter os OrderItems salvos para DTOs para a resposta
         List<OrderItemResponseDTO> itemDTOs = savedOrder.getItems().stream()
                 .map(OrderItemResponseDTO::from)
                 .collect(Collectors.toList());
@@ -170,7 +159,6 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
 
-        // Verifica se o usuário é dono do pedido ou ADMIN (simplificado aqui só checando ID)
         if (!order.getBuyer().getUserId().equals(userId)) {
 
             throw new RuntimeException("Usuário não tem permissão para cancelar este pedido");
@@ -183,7 +171,6 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELED);
         Order canceledOrder = orderRepository.save(order);
 
-        // Devolve o estoque
         returnStockFromOrder(canceledOrder);
 
         List<OrderItemResponseDTO> itemDTOs = canceledOrder.getItems().stream()
@@ -272,7 +259,6 @@ public class OrderService {
         }
     }
 
-    // === CONVERSOR ===
     private OrderResponseDTO toDTO(Order order) {
         // Converte os itens primeiro
         List<OrderItemResponseDTO> itemsDTO = order.getItems().stream()

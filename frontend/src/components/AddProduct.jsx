@@ -41,7 +41,6 @@ function AddProduct({ onClose, onProductAdded }) {
     try {
       let categoryId = productData.categoryId;
 
-      // Se deve criar nova categoria
       if (createNewCategory && productData.categoryName.trim()) {
         try {
           const newCategory = await categoryService.createCategory({
@@ -62,7 +61,6 @@ function AddProduct({ onClose, onProductAdded }) {
         return;
       }
 
-      // Criar produto
       await productService.createProduct({
         productName: productData.productName,
         description: productData.description,

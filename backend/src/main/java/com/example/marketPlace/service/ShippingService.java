@@ -42,11 +42,10 @@ public class ShippingService {
         if (cleanCep.length() != 8) return options;
 
         try {
-            // 1. Monta o Payload da Requisição
+
             MelhorEnvioRequestDTO requestPayload = createPayload(cleanCep);
             String jsonBody = objectMapper.writeValueAsString(requestPayload);
 
-            // 2. Prepara a chamada HTTP
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(apiUrl))
@@ -56,21 +55,18 @@ public class ShippingService {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
-            // 3. Envia e recebe
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() == 200) {
-                // 4. Deserializa a resposta (Lista de opções)
+
                 List<MelhorEnvioResponseDTO> meOptions = objectMapper.readValue(
                         response.body(),
                         new TypeReference<List<MelhorEnvioResponseDTO>>() {}
                 );
 
-                // 5. Converte para o DTO do nosso Frontend
                 for (MelhorEnvioResponseDTO meOption : meOptions) {
                     if (meOption.error() != null) continue; // Pula opções indisponíveis
 
-                    // Formata o nome: "Jadlog .Package (Jadlog)" ou "SEDEX (Correios)"
                     String carrierName = meOption.company().name();
                     String serviceName = meOption.name() + " (" + carrierName + ")";
 
@@ -86,27 +82,24 @@ public class ShippingService {
 
         } catch (Exception e) {
             log.error("Falha ao calcular frete no Melhor Envio", e);
-            // Fallback silencioso ou lançar exceção customizada
         }
 
         return options;
     }
 
     private MelhorEnvioRequestDTO createPayload(String cepDestino) {
-        // Origem e Destino
+
         var from = new MelhorEnvioRequestDTO.Location(cepOrigem);
         var to = new MelhorEnvioRequestDTO.Location(cepDestino);
 
-        // Simulando um produto (Num app real, viria do Carrinho do BD)
-        // Para calcular Correios, o peso deve ser > 0
         var produtoExemplo = new MelhorEnvioRequestDTO.ProductPayload(
                 "ID_PRODUTO",
-                20, // largura cm
-                20, // altura cm
-                20, // comprimento cm
-                1.0, // peso kg
-                50.0, // valor seguro R$
-                1 // quantidade
+                20,
+                20,
+                20,
+                1.0,
+                50.0,
+                1
         );
 
         return new MelhorEnvioRequestDTO(from, to, Collections.singletonList(produtoExemplo));

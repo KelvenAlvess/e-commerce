@@ -12,10 +12,6 @@ public class PaymentReconciler {
 
     private final PaymentService paymentService;
 
-    /**
-     * Executa a cada 5 minutos (300.000 ms)
-     * Verifica se existem pagamentos "presos" no status PENDING e tenta atualizar.
-     */
     @Scheduled(fixedDelay = 300000)
     public void runReconciliation() {
         log.info("Iniciando Job de Reconciliação de Pagamentos...");

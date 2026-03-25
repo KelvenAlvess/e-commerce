@@ -5,7 +5,7 @@ import categoryService from '../service/categoryService';
 import ProductCard from '../components/ProductCard';
 
 function CategoryProducts() {
-  // 1. O nome aqui TEM que ser igual ao definido no App.jsx (:categoryId)
+
   const { categoryId } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -24,7 +24,6 @@ function CategoryProducts() {
       setLoading(true);
       setError(null);
 
-      // Carrega os dados em paralelo para ser mais rápido
       const [catData, prodData] = await Promise.all([
         categoryService.getCategoryById(id),
         productService.getProductsByCategory(id)

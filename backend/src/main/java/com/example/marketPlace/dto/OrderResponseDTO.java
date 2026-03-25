@@ -41,8 +41,8 @@ public record OrderResponseDTO(
                 order.getOrderDate(),
                 order.getStatus(),
                 items,
-                shipping,    // Passando o frete
-                totalAmount, // Passando o total corrigido
+                shipping,
+                totalAmount,
                 totalItems
         );
     }
